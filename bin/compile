@@ -5,13 +5,14 @@ cd $BUILD_DIR
 echo $BUILD_DIR
 echo $CACHE_DIR
 
+mkdir -p $BUILD_DIR/.heroku/vendor/jq
 
 git clone https://github.com/stedolan/jq.git
 cd jq
 autoreconf -i
 ./configure --enable-shared
 make
-make install DESTDIR=$CACHE_DIR
+make install DESTDIR=$BUILD_DIR/.heroku/vendor/jq
 
 export JD=$CACHE_DIR
 
