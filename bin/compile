@@ -1,19 +1,23 @@
 #!/bin/bash
 BUILD_DIR=$1
 CACHE_DIR=$2
-cd $BUILD_DIR
+DEST_DIR=$BUILD_DIR/.heroku/vendor/jq
+
+cd $CACHE_DIR
+
 echo $BUILD_DIR
 echo $CACHE_DIR
+echo $DEST_DIR
 
-mkdir -p $BUILD_DIR/.heroku/vendor/jq
+mkdir -p $DEST_DIR
 
 git clone https://github.com/stedolan/jq.git
 cd jq
 autoreconf -i
 ./configure --enable-shared
 make
-make install DESTDIR=$BUILD_DIR/.heroku/vendor/jq
+make install DESTDIR=$DEST_DIR
 
 export JD=$CACHE_DIR
 
-find /app -name \*jq\* -print
+find $BUILD_DIR -name \*jq\* -print
