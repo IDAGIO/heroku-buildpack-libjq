@@ -16,3 +16,7 @@ make install DESTDIR=$CACHE_DIR
 export JD=$CACHE_DIR
 
 find /app -name \*jq\* -print
+
+gem install ruby-jq -- \
+  --with-opt-lib="${CACHE_DIR}/usr/local/lib" \
+  --with-opt-include="${CACHE_DIR}/usr/local/include"
