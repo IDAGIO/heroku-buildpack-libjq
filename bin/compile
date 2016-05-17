@@ -22,5 +22,5 @@ make install DESTDIR=$DEST_DIR
 find $BUILD_DIR -name \*jq\* -print
 
 GEM_HOME=$GEM_DIR GEM_PATH=$GEM_DIR gem install ruby-jq -- \
-  --with-opt-lib="${DEST_DIR}/lib" \
-  --with-opt-include="${DEST_DIR}/include"
+  --with-opt-lib="${DEST_DIR}/usr/local/lib" \
+  --with-opt-include="${DEST_DIR}/usr/local/include"
