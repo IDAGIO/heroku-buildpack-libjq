@@ -2,7 +2,7 @@
 BUILD_DIR=$1
 CACHE_DIR=$2
 DEST_DIR=$BUILD_DIR/.heroku/vendor/jq
-GEM_DIR=$BUILD_DIR/vendor/bundle/ruby/2.3.0
+GEM_DIR=$BUILD_DIR/vendor/bundle/ruby/2.3.1
 
 cd $CACHE_DIR
 
