@@ -1,22 +1,26 @@
 #!/bin/bash
 BUILD_DIR=$1
 CACHE_DIR=$2
-cd $BUILD_DIR
+DEST_DIR=$BUILD_DIR/.heroku/vendor/jq
+GEM_DIR=$BUILD_DIR/vendor/bundle/ruby/2.3.0
+
+cd $CACHE_DIR
+
 echo $BUILD_DIR
 echo $CACHE_DIR
+echo $DEST_DIR
 
+mkdir -p $DEST_DIR
 
 git clone https://github.com/stedolan/jq.git
 cd jq
 autoreconf -i
 ./configure --enable-shared
 make
-make install DESTDIR=$CACHE_DIR
+make install DESTDIR=$DEST_DIR
 
-export JD=$CACHE_DIR
+find $BUILD_DIR -name \*jq\* -print
 
-find /app -name \*jq\* -print
-
-gem install ruby-jq -- \
-  --with-opt-lib="${CACHE_DIR}/usr/local/lib" \
-  --with-opt-include="${CACHE_DIR}/usr/local/include"
+GEM_HOME=$GEM_DIR GEM_PATH=$GEM_DIR gem install ruby-jq -- \
+  --with-opt-lib="${DEST_DIR}/lib" \
+  --with-opt-include="${DEST_DIR}/include"
