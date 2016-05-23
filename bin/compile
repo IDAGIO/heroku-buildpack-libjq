@@ -1,7 +1,7 @@
 #!/bin/bash
 BUILD_DIR=$1
 CACHE_DIR=$2
-DEST_DIR=$BUILD_DIR/vendor/jq
+DEST_DIR=$BUILD_DIR/.heroku/vendor/jq
 # GEM_DIR=$BUILD_DIR/vendor/bundle/ruby/2.3.0
 
 cd $CACHE_DIR
