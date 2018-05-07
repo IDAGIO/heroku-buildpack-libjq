@@ -1,18 +1,70 @@
 #!/bin/bash
+
+BP_DIR=$(cd $(dirname ${0:-}); cd ..; pwd)
 BUILD_DIR=$1
 CACHE_DIR=$2
+PROFILE_PATH="$BUILD_DIR/.profile.d/libjq.sh"
+INSTALL_DIR="$BUILD_DIR/.heroku/vendor/lib"
+
+# Usage: $ set-env key value
+set-env() {
+  echo "export $1=$2" >> $PROFILE_PATH
+}
+
 cd $BUILD_DIR
-echo $BUILD_DIR
-echo $CACHE_DIR
 
+cat <<EOF
+-----> Running buildpack https://github.com/IDAGIO/heroku-buildpack-libjq
 
-git clone https://github.com/stedolan/jq.git
-cd jq
-autoreconf -i
-./configure --enable-shared
-make
-make install DESTDIR=$CACHE_DIR
+BP_DIR = $BUILD_DIR
+BUILD_DIR = $BUILD_DIR
+CACHE_DIR = $CACHE_DIR
+EOF
 
-export JD=$CACHE_DIR
+mkdir -p $INSTALL_DIR
 
-find /app -name \*jq\* -print
+# rm -rf /app/tmp/cache/*
+if [ ! -e /app/tmp/cache/usr/local/lib/libjq.so ]; then
+  echo
+  echo "-----> Clone jq"
+
+  git clone https://github.com/stedolan/jq.git
+
+  cd jq
+  git checkout tags/jq-1.6rc1
+
+  echo
+  echo "-----> Build jq"
+
+  git submodule update --init --recursive
+
+  cd modules/oniguruma
+  autoreconf -fi
+  ./configure --enable-shared
+  cd ../..
+
+  autoreconf -fi
+  ./configure --enable-shared
+  make
+  make install DESTDIR=$CACHE_DIR
+fi
+
+mkdir -p $INSTALL_DIR
+rsync -avz /app/tmp/cache/usr/local/lib/ ${INSTALL_DIR}
+set-env LD_LIBRARY_PATH '/app/.heroku/vendor/lib:$LD_LIBRARY_PATH'
+
+# cat >>$PROFILE_PATH <<EOF
+# env
+# find /app/.heroku/vendor/libjq
+# EOF
+
+echo
+echo "-----> Found installed jq library files:"
+find ${INSTALL_DIR}
+echo
+
+cat >${BP_DIR}/export <<EOF
+export LIBRARY_PATH="/app/tmp/cache/usr/local/lib:\${LIBRARY_PATH}"
+export CPATH="/app/tmp/cache/usr/local/include:\${CPATH}"
+EOF
+
