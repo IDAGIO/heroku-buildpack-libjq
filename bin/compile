@@ -24,7 +24,7 @@ EOF
 mkdir -p $INSTALL_DIR
 
 # rm -rf /app/tmp/cache/*
-if [ ! -e /app/tmp/cache/usr/local/lib/libjq.so ]; then
+if [ ! -e ${CACHE_DIR}/usr/local/lib/libjq.so ]; then
   echo
   echo "-----> Clone jq"
 
@@ -50,7 +50,7 @@ if [ ! -e /app/tmp/cache/usr/local/lib/libjq.so ]; then
 fi
 
 mkdir -p $INSTALL_DIR
-rsync -avz /app/tmp/cache/usr/local/lib/ ${INSTALL_DIR}
+rsync -avz ${CACHE_DIR}/usr/local/lib/ ${INSTALL_DIR}
 set-env LD_LIBRARY_PATH '/app/.heroku/vendor/lib:$LD_LIBRARY_PATH'
 
 # cat >>$PROFILE_PATH <<EOF
@@ -64,7 +64,7 @@ find ${INSTALL_DIR}
 echo
 
 cat >${BP_DIR}/export <<EOF
-export LIBRARY_PATH="/app/tmp/cache/usr/local/lib:\${LIBRARY_PATH}"
-export CPATH="/app/tmp/cache/usr/local/include:\${CPATH}"
+export LIBRARY_PATH="/${CACHE_DIR}/usr/local/lib:\${LIBRARY_PATH}"
+export CPATH="/$CACHE_DIR}/usr/local/include:\${CPATH}"
 EOF
 
